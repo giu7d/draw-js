@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Draw JS</title>
+    
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
+
+  <style>
+  
+    html {
+      position: relative;
+      min-height: 100%;
+    }
+
+    main {
+      overflow: hidden;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      background-color: #6F42C1;
+      color: #ffffff;
+      font-size: 12px;
+    }
+    
+  </style>
+
+</head>
+<body onload="start();" class="bg-light">
+
+  <!-- Title -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand mr-auto mr-lg-0" href="#">Offcanvas navbar</a>
+  </nav>
+  
+  <!-- Controlers / Options -->
+  <div class="nav-scroller bg-white shadow-sm">
+    <nav class="nav nav-underline">
+      <a  class="nav-link active" href="#">Link</a>
+      <a class="nav-link" href="#">Link</a>
+      <a class="nav-link" href="#">Link</a>
+    </nav>
+
+  </div>
+
+  <!-- Canvas -->
+  <main role="main" 
+        class="container">
+    <canvas onmouseover="track(event);"
+            id="canvas"
+            class="m-auto" 
+            width="500" 
+            height="500" 
+            draggable="true"></canvas>
+  </main>
+  
+  <!-- Values -->
+  <footer>
+    <div class="container">
+      <span id="mouseCoordinatesDisplay"><b>X:</b>0.00 <b>Y:</b>0.00</span>
+    </div>
+  </footer>
+
+  <script>
+    
+    import * as $ from 'jquery';
+    import 'popper.js';
+    import 'bootstrap';
+    import { main, trackMouse } from './js/Main';
+
+    const start = () => main();
+    const track = (e) => window.addEventListener('mousemove', trackMouse, false);
+
+  </script>
+
+</body>
+</html>
