@@ -13,9 +13,9 @@ export function getMousePosition(canvas, event) {
 }
 
 export function xViewportToWorld(x, world, viewport) {
-    return parseFloat(((x - viewport.xMin) / (viewport.xMax - viewport.xMin)) * (world.xMax - world.xMin) + world.xMin);
+    return parseFloat(((x - viewport.xMin) / (viewport.xMax - viewport.xMin)) * (world.xMax - world.xMin) + world.xMin).toFixed(2);
 }
 
 export function yViewportToWorld(y, world, viewport) {
-    return parseFloat((1 - ((y - viewport.yMin) / (viewport.yMax - viewport.yMin))) * (world.yMax - world.yMin) + world.yMin);
+    return parseFloat((1 - ((y - viewport.yMin) / (viewport.yMax - viewport.yMin))) * (world.yMax - world.yMin) + world.yMin).toFixed(2);
 }

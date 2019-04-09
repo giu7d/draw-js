@@ -1,7 +1,7 @@
 export class Poligon {
 
 
-    constructor(id, type, points) {
+    constructor(id, type, points = []) {
         this.id = id;
         this.type = type;
         this.points = [...points];

@@ -34,7 +34,8 @@
   </style>
 
 </head>
-<body onload="start();" class="bg-light">
+<body onload = "start();"
+      class="bg-light">
 
   <!-- Title -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -44,7 +45,9 @@
   <!-- Controlers / Options -->
   <div class="nav-scroller bg-white shadow-sm">
     <nav class="nav nav-underline">
-      <a  class="nav-link active" href="#">Link</a>
+      <a id="line" onclick="makeLine();" class="nav-link active" href="#">
+        Reta
+      </a>
       <a class="nav-link" href="#">Link</a>
       <a class="nav-link" href="#">Link</a>
     </nav>
@@ -54,7 +57,7 @@
   <!-- Canvas -->
   <main role="main" 
         class="container">
-    <canvas onmouseover="track(event);"
+    <canvas onmousemove="trackMouse(event);"
             id="canvas"
             class="m-auto" 
             width="500" 
@@ -70,14 +73,18 @@
   </footer>
 
   <script>
-    
+
     import * as $ from 'jquery';
     import 'popper.js';
     import 'bootstrap';
-    import { main, trackMouse } from './js/Main';
+    import { IndexController } from './IndexController';
 
-    const start = () => main();
-    const track = (e) => window.addEventListener('mousemove', trackMouse, false);
+    const main = new IndexController();
+
+    const start = () =>  main.setup();
+
+    const trackMouse = (e) => main.mouseCoordinateHandler(e);
+    const makeLine = () => main.makeLineHandler();
 
   </script>
 
