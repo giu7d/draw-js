@@ -8,6 +8,7 @@
   <title>Draw JS</title>
     
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <style>
   
@@ -30,6 +31,10 @@
       color: #ffffff;
       font-size: 12px;
     }
+
+    button {
+      line-height: 12px !important;
+    }
     
   </style>
 
@@ -39,19 +44,76 @@
 
   <!-- Title -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand mr-auto mr-lg-0" href="#">Offcanvas navbar</a>
+    <a class="navbar-brand mr-auto mr-lg-0" href="#">Draw.js</a>
   </nav>
   
-  <!-- Controlers / Options -->
+  <!-- Controllers / Options -->
   <div class="nav-scroller bg-white shadow-sm">
-    <nav class="nav nav-underline">
-      <a id="line" onclick="makeLine();" class="nav-link active" href="#">
-        Reta
-      </a>
-      <a class="nav-link" href="#">Link</a>
-      <a class="nav-link" href="#">Link</a>
-    </nav>
+    <nav class="nav px-2">
+      
+      <!-- Drawing -->
+      <div class="btn-group my-2">
+        <!-- Make Line -->
+        <button id="line"
+                type="button" 
+                class="btn btn-outline-secondary"
+                onclick="makeLine();">
+          <i class="material-icons">remove</i>                
+        </button>
+  
+        <!-- Make Circle -->    
+        <button id="circle" 
+                type="button" 
+                class="btn btn-outline-secondary" 
+                onclick="makeCircle();">
+          <i class="material-icons">radio_button_unchecked</i>
+        </button>
+      </div>
 
+      <div style="flex: 1 1;"></div>
+      
+      <!-- Settings -->
+      <div class="btn dropleft">
+        <button class="btn btn-outline-secondary dropdown-toggle" 
+                type="button" 
+                id="settingsBtn" 
+                data-toggle="dropdown"
+                aria-haspopup="true" 
+                aria-expanded="false">
+          <i class="material-icons">settings</i>        
+        </button>
+        <div class="dropdown-menu" aria-labelledby="settingsBtn">
+          <span class="dropdown-item-text">Metodo de Renderização</span>          
+          <form onchange="setLineType(event.srcElement.value);" class="p-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="renderMethod" id="standardOpt" value="std" checked>
+              <label class="form-check-label" for="standardOpt">
+                Padrão
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="renderMethod" id="ddaOpt" value="dda">
+              <label class="form-check-label" for="ddaOpt">
+                DDA
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="renderMethod" id="bresOpt" value="bre">
+              <label class="form-check-label" for="bresOpt">
+                Bresenham
+              </label>
+            </div>
+          </form>
+          <div class="dropdown-divider"></div>
+          <form onchange="setCircleRadius(event.srcElement.value);" class="p-3">
+            <div class="form-group">
+              <label for="formRadius">Raio</label>
+              <input type="number" class="form-control" id="formRadius" placeholder="10" value="10">
+            </div>
+          </form>
+        </div>
+      </div>
+    </nav>  
   </div>
 
   <!-- Canvas -->
@@ -62,7 +124,7 @@
             class="m-auto" 
             width="500" 
             height="500" 
-            draggable="true"></canvas>
+            draggable="false"></canvas>
   </main>
   
   <!-- Values -->
@@ -84,7 +146,12 @@
     const start = () =>  main.setup();
 
     const trackMouse = (e) => main.mouseCoordinateHandler(e);
+
     const makeLine = () => main.makeLineHandler();
+    const makeCircle = () => main.makeCircleHandler();
+
+    const setLineType = (value) => main.setLineType(value.toString());
+    const setCircleRadius = (value) => main.setCircleRadius(parseInt(value));
 
   </script>
 
