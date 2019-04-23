@@ -4,7 +4,6 @@ import { Window } from './libs/Window';
 import { Display } from './libs/Display';
 import { Mouse } from './libs/Mouse';
 
-let idIterator = 0;
 
 export class IndexController {
 
@@ -16,8 +15,8 @@ export class IndexController {
         
         this.ctx = this.canvasElement.getContext('2d');
         
-        // Proprieties
-
+        // Proprierties
+        
         this.world = new Window(-250, 250, -250, 250);
         this.viewport = new Window(0, 500, 0, 500);
         this.display = new Display();
@@ -33,10 +32,32 @@ export class IndexController {
             clipHeight: 300,
             clipWidth: 300
         }
-        
-    }   
+    }
 
+
+    setup() {
+        
+        this.display.poligons.push(
+            new Poligon(this.settings.lineType, [
+                new Point(0, this.world.yMax),
+                new Point(0, this.world.yMin)
+            ])
+        );
+
+        this.display.poligons.push(
+            new Poligon(this.settings.lineType, [
+                new Point(this.world.xMin, 0),
+                new Point(this.world.xMax, 0)
+            ])
+        );
+        
+        this.display.draw(this.ctx, this.world, this.viewport);
+    }
+
+    // 
     // Handlers
+    // 
+    
     mouseCoordinateHandler(event) {
 
         this.mouse.setPosition(event);
@@ -47,11 +68,13 @@ export class IndexController {
         this.mouseDisplayElement.innerHTML = `X: ${x} Y:${y}`;
     }
 
+    // shapes
+    
     makeLineHandler() {
         
-        const poligon = new Poligon(idIterator++, this.settings.lineType);
-        const eventHandler = (e) => makeDrawEvent(e, eventHandler, poligon, this.canvasElement, this.ctx, this.display, this.world, this.viewport, this.mouse);
-        
+        const poligon = new Poligon(this.settings.lineType);
+        const eventHandler = (e) => this._drawEvent(e, eventHandler, poligon);
+    
         toggleSettings();
 
         this.canvasElement.addEventListener('click', eventHandler, false);
@@ -59,13 +82,15 @@ export class IndexController {
 
     makeCircleHandler() {
 
-        const poligon = new Poligon(idIterator++, this.settings.lineType, [], this.settings.circleRadius);
-        const eventHandler = (e) => makeDrawEvent(e, eventHandler, poligon, this.canvasElement, this.ctx, this.display, this.world, this.viewport, this.mouse);
+        const poligon = new Poligon(this.settings.lineType, [], this.settings.circleRadius);
+        const eventHandler = (e) => this._drawEvent(e, eventHandler, poligon);
         
         toggleSettings();
+
         this.canvasElement.addEventListener('click', eventHandler, false);
     }
 
+    // tools
 
     translateHandler() {
         
@@ -77,8 +102,14 @@ export class IndexController {
             
             switch(key) {
                 case 'ArrowUp':
-                    this.ctx.translate(0, -this.settings.translateSpeed);
-                    this.mouse.setTranslation(0, this.settings.translateSpeed);
+
+                    // this.ctx.translate(0, -this.settings.translateSpeed);
+                    // this.mouse.setTranslation(0, this.settings.translateSpeed);
+                    
+                    this.display.poligons.map(poligon => {
+                        poligon.translate(0, this.settings.translateSpeed);
+                    });
+
                     break;
 
                 case 'ArrowDown':
@@ -113,12 +144,15 @@ export class IndexController {
     }
     
     rotateHandler() {
-
-        // this.ctx.translate(this.ctx.canvas.width/2, this.ctx.canvas.height/2);
-        this.ctx.rotate(this.settings.rotationDegrees * Math.PI / 180);
-        // this.ctx.translate(-this.ctx.canvas.width / 2, -this.ctx.canvas.height / 2);
         
-        this.mouse.setRotation(-this.settings.rotationDegrees * Math.PI / 180);
+        if (this.settings.rotateCenter){
+            this.ctx.translate(this.ctx.canvas.width/2, this.ctx.canvas.height/2);
+            this.ctx.rotate(this.settings.rotationDegrees * Math.PI / 180);
+            this.ctx.translate(-this.ctx.canvas.width / 2, -this.ctx.canvas.height / 2);
+        } else {            
+            this.ctx.rotate(this.settings.rotationDegrees * Math.PI / 180);
+            this.mouse.setRotation(-this.settings.rotationDegrees * Math.PI / 180);
+        }
         
         this.display.draw(this.ctx, this.world, this.viewport);
     }
@@ -181,25 +215,10 @@ export class IndexController {
         this.canvasElement.addEventListener('click', eventHandler, false);
     }
 
-    // Settings
-    setup() {
-        
-        this.display.poligons.push(
-            new Poligon(idIterator++, this.settings.lineType, [
-                new Point(0, this.world.yMax),
-                new Point(0, this.world.yMin)
-            ])
-        );
 
-        this.display.poligons.push(
-            new Poligon(idIterator++, this.settings.lineType, [
-                new Point(this.world.xMin, 0),
-                new Point(this.world.xMax, 0)
-            ])
-        );
-
-        this.display.draw(this.ctx, this.world, this.viewport);
-    }
+    // 
+    // Setter's
+    // 
 
     setLineType(type) {
         this.settings.lineType = type;
@@ -224,6 +243,32 @@ export class IndexController {
     setClipWidth(px) {
         this.settings.clipWidth = px;
     }
+
+    setRotationCenter(value) {
+        this.settings.rotateCenter = value;
+    }
+
+
+    _drawEvent(event, handlerFunction, poligon) {
+
+        if (!event.ctrlKey) {
+
+            this.mouse.setPosition(event);
+
+            const x = this.mouse.position.xViewportToWorld(this.world, this.viewport);
+            const y = this.mouse.position.yViewportToWorld(this.world, this.viewport);
+
+            poligon.points.push(new Point(x, y));
+
+            this.display.poligons.push(poligon);
+            this.display.draw(this.ctx, this.world, this.viewport);
+        } else {
+            toggleSettings();
+            this.canvasElement.removeEventListener('click', handlerFunction, false);
+            console.log('exit');
+        }
+    }
+
 }
 
 export function toggleSettings() {
@@ -233,22 +278,3 @@ export function toggleSettings() {
     settingsElement.disabled = (disabled) ? false : true;
 }
 
-export function makeDrawEvent(event, handlerFunction, poligon, canvas, ctx, display, world, viewport, mouse) {
-
-    if (!event.ctrlKey) {
-
-        mouse.setPosition(event);
-
-        const x = mouse.position.xViewportToWorld(world, viewport);
-        const y = mouse.position.yViewportToWorld(world, viewport);
-
-        poligon.points.push(new Point(x, y));
-        display.poligons.push(poligon);
-        display.draw(ctx, world, viewport);
-
-    } else {
-        toggleSettings();
-        canvas.removeEventListener('click', handlerFunction, false);
-        console.log('exit');
-    }
-}

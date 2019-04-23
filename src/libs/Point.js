@@ -5,8 +5,7 @@ export class Point {
         this.y = y;
     }
 
-
-    translate(x, y){
+    translate(x, y) {
         this.x += x;
         this.y += y;
     }
@@ -17,36 +16,25 @@ export class Point {
         this.y = aux * Math.sin(theta) + this.y * Math.cos(theta);
     }
 
-    rotateSelf(centerX, centerY, theta) {
+    rotateSelfCenter(centerX, centerY, theta) {
         const aux = this.x;
         this.x = ((this.x-centerX) * Math.cos(theta)) + (-(this.y - centerY) * Math.sin(theta));
         this.y = ((aux-centerX) * Math.sin(theta)) + ((this.y-centerY) * Math.cos(theta));
     }
 
-    // scale(x, y) {
-    //     this.x *= x;
-    //     this.y *= y;
-    // }
+    scale(x, y) {
+        this.x *= x;
+        this.y *= y;
+    }
 
-    
-
-    // World 2 Viewport
-
-    // Name:
-    //      xWorldToViewport(world: Window, viewport: Window)
-    //      yWorldToViewport(world: Window, viewport: Window)
-    // Task:
-    //      Converte world coordinates to viewport
-    
     xWorldToViewport(world, viewport) {
         return ((this.x - world.xMin) / (world.xMax - world.xMin)) * (viewport.xMax - viewport.xMin);
     }
+
     yWorldToViewport(world, viewport) {
         return (1 - (this.y - world.yMin) / (world.yMax - world.yMin)) * (viewport.yMax - viewport.yMin);
     }
 
-    // Viewport 2 World
-    
     xViewportToWorld(world, viewport) {
         return parseFloat(((this.x - viewport.xMin) / (viewport.xMax - viewport.xMin)) * (world.xMax - world.xMin) + world.xMin).toFixed(2);
     }

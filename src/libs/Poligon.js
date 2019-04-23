@@ -1,23 +1,20 @@
 export class Poligon {
 
 
-    constructor(id, type, points = [], radius = 0) {
-        this.id = id;
+    constructor(type, points = [], radius = 0) {
         this.type = type;
         this.points = [...points];
         this.radius = radius
     }
-
-    // Plot Lines or Circles
-    draw(canvas, world, viewport) {
-        if (this.radius === 0) {
-            this.plotLine(canvas, world, viewport);
-        } else {
-            this.plotCircle(canvas, world, viewport);
-        }
+    
+    // 
+    // PLOT
+    // 
+    
+    plot(canvas, world, viewport) {
+        (this.radius === 0) ? this.plotLine(canvas, world, viewport) : this.plotCircle(canvas, world, viewport);
     }
 
-    // Plot Lines w/ Poligon.type selected algorithm;
     plotLine(canvas, world, viewport) {
         switch (this.type) {
             case 'std':
@@ -35,46 +32,75 @@ export class Poligon {
         }
     }
 
-    // Plot Circle w/ Poligon.type selected algorithm;  
     plotCircle(canvas, world, viewport) {
         switch (this.type) {
             default:                
-                let xViewport, yViewport;
-                
-                for (let i = 0; i < this.points.length; i++) {
-
-                    xViewport = this.points[i].xWorldToViewport(world, viewport);
-                    yViewport = this.points[i].yWorldToViewport(world, viewport);
-
-                    this._bresenhamCircle(xViewport, yViewport, this.radius, canvas);
-                }
+                this.points.map(point => {
+                    const xViewport = point.xWorldToViewport(world, viewport);
+                    const yViewport = point.yWorldToViewport(world, viewport);    
+                    this._bresenhamCircle(xViewport, yViewport, this.radius, canvas); 
+                });
                 break;
         }
     }
 
+    // 
+    // TOOLS
+    // 
     
-    // RENDER LINE IMPL & ALGORITHMS
+    translate(x, y) {        
+        this.points.map(point => {
+            point.translate(x,y)
+        });
+    }
 
-    // Name:
-    //      _stdLine(canvas, world, viewport)
-    //      _ddaLine(canvas, world, viewport)
-    //      _bresenhamLine(canvas, world, viewport)
-    // Task:
-    //      Draw lines with Standart JS, DDA and Bresenham
+    rotate(theta) {
+        this.points.map(point => {
+            point.rotate(theta);
+        });
+    }
+
+    rotateSelfCenter(theta) {
+        let xAux = 0; 
+        let yAux = 0;
+        
+        this.points.map(point => {
+            xAux += point.x;
+            yAux += point.y;
+        });
+
+        const xCenter = xAux / this.points.length;
+        const yCenter = yAux / this.points.length;
+
+        this.points.map(point => {
+            point.rotateSelfCenter(xCenter, yCenter, theta);
+        });
+
+    }
+
+    scale(rate) {
+        this.points.map(point => {
+            point.scale(rate, rate);
+        });
+    }
+
+
+    // 
+    // ALGORITHMS
+    // 
+
+    // LINE
     _stdLine(canvas, world, viewport) {
-
-        let xViewport, yViewport;
 
         canvas.beginPath();
         
-        for (let i = 0; i < this.points.length; i++) {
+        this.points.map((point,i) => {
+            const xViewport = point.xWorldToViewport(world, viewport);
+            const yViewport = point.yWorldToViewport(world, viewport);
 
-            xViewport = this.points[i].xWorldToViewport(world, viewport);
-            yViewport = this.points[i].yWorldToViewport(world, viewport);
-
-            (i == 0) ? canvas.moveTo(xViewport, yViewport): canvas.lineTo(xViewport, yViewport);
-        }
-
+            (i == 0) ? canvas.moveTo(xViewport, yViewport) : canvas.lineTo(xViewport, yViewport);
+        });
+        
         canvas.stroke();
     }
 
@@ -110,11 +136,6 @@ export class Poligon {
         }
     }
 
-    // Name:
-    //      _dda(canvas, world, viewport)
-    //      _bresenham(canvas, world, viewport)
-    // Task:
-    //      DDA and Bresenham algorithms
     _dda(xStart, yStart, xEnd, yEnd, canvas) {
 
         // Calculate Delta X & Y
@@ -180,12 +201,7 @@ export class Poligon {
         }
     }
     
-    // RENDER CIRCLE IMPL & ALGORITHMS
-
-    // Name:
-    //      _bresenhamCircle(canvas, world, viewport)
-    // Task:
-    //      Desenha circulo com o algoritmo de bresenham;
+    // CIRCLE
     _bresenhamCircle(x, y, radius, canvas) {
         
         let spareX = -radius;
@@ -214,49 +230,6 @@ export class Poligon {
         } 
         while (spareX < 0);
     }
-
-
-    // Clipping
-
-    // clipping(clip, world, viewport) {
-        
-    //     let p1, p2, out;
-
-    //     poli = new Poligon(0, 'std');
-
-    //     for(let i = 0; i < this.points.length -1; i++) {
-            
-    //         p1 = this.points[i].regionCode(clip, world, viewport);
-    //         p2 = this.points[i+1].regionCode(clip,world,viewport);
-
-    //         if ((p1 === 0) && (p2 === 0)) {
-    //             poli.points.push(this.points[i]);
-    //             poli.points.push(this.points[i+1]);
-    //         } else if ((p1 & p2) == 0) {
-                
-    //             let m = (this.points[i+1].y - this.points[i].y)/(this.points[i+1].x - this.points[i].x);
-    //             let xAux, yAux;
-
-    //             if (p1 != 0 && p2 == 0) {
-    //                 out = p1;
-    //                 poli.points.push(this.points[i+1]);
-    //                 // poli.points.push(calculateNewPoint);
-    //             } else if (p1 == 0 && p2 != 0) {
-    //                 out = p2;
-    //                 poli.points.push(this.points[i]);
-    //                 // poli.points.push(calculateNewPoint);
-    //             } else {
-    //                 out = p2;
-    //                 // poli.points.push(calculateNewPoint);
-    //                 // poli.points.push(calculateNewPoint);
-    //             }
-    //         }
-    //     }
-
-    //     return poli;
-    // }
-
-
-    // _calculateNewPoint()
+    
 
 }

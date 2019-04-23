@@ -1,18 +1,18 @@
 export class Display {
 
-    constructor() {
-        this.poligons = [];
+    constructor(poligons = []) {
+        this.poligons = poligons;
     }
 
+    
     draw(canvas, world, viewport) {
 
         this._reset(canvas);
-
-        for(let i = 0; i < this.poligons.length; i++) {
-            this.poligons[i].draw(canvas,world,viewport);
-        }
+        
+        this.poligons.map(poligon => {
+            poligon.plot(canvas, world, viewport);
+        })
     }
-
 
     _reset(canvas) {
         canvas.save();
