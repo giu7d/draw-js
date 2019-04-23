@@ -52,7 +52,7 @@
     <nav class="nav px-2">
       
       <!-- Drawing -->
-      <div class="btn-group my-2">
+      <div class="btn-group m-2">
         <!-- Make Line -->
         <button id="line"
                 type="button" 
@@ -68,6 +68,46 @@
                 onclick="makeCircle();">
           <i class="material-icons">radio_button_unchecked</i>
         </button>
+
+      </div>
+
+      <!-- Tools -->
+      <div class="btn-group m-2">
+        <!-- Translate -->
+        <button id="translate"
+                type="button" 
+                class="btn btn-outline-secondary" 
+                onclick="doTranslate();">
+          <i class="material-icons">open_with</i>
+        </button>
+      
+        
+        <!-- Rotate -->
+        <button id="rotate"
+                type="button" 
+                class="btn btn-outline-secondary" 
+                onclick="doRotate();">
+          <i class="material-icons">loop</i>
+        </button>
+
+        <!-- Scale -->
+        <button id="scale"
+                type="button" 
+                class="btn btn-outline-secondary" 
+                onclick="doScale();">
+          <i class="material-icons">zoom_out_map</i>
+        </button>
+
+
+        <!-- Scale -->
+        <button id="scale"
+                type="button" 
+                class="btn btn-outline-secondary" 
+                onclick="doClip();">
+          <i class="material-icons">crop</i>
+        </button>
+
+
       </div>
 
       <div style="flex: 1 1;"></div>
@@ -104,13 +144,31 @@
               </label>
             </div>
           </form>
-          <div class="dropdown-divider"></div>
-          <form onchange="setCircleRadius(event.srcElement.value);" class="p-3">
-            <div class="form-group">
-              <label for="formRadius">Raio</label>
-              <input type="number" class="form-control" id="formRadius" placeholder="10" value="10">
-            </div>
-          </form>
+          <div class="dropdown-divider p-3"></div>
+          <div onchange="setCircleRadius(event.srcElement.value);" class="form-group">
+            <label for="formRadius">Raio</label>
+            <input type="number" class="form-control" id="formRadius" value="10">
+          </div>
+          <div onchange="setTranslateSpeed(event.srcElement.value);" class="form-group">
+            <label for="formRadius">Velocidade</label>
+            <input type="number" class="form-control" id="formRadius" value="10">
+          </div>
+          <div onchange="setRotationDegrees(event.srcElement.value);" class="form-group">
+            <label for="formRadius">Graus</label>
+            <input type="number" class="form-control" id="formRadius" value="25">
+          </div>
+          <div class="dropdown-divider p-3"></div>
+          <span class="dropdown-item-text">Tamanho Cliping</span>
+
+          <div onchange="setClipHeight(event.srcElement.value);" class="form-group">
+            <label for="formRadius">Altura</label>
+            <input type="number" class="form-control" id="formRadius" value="300">
+          </div>
+
+          <div onchange="setClipWidth(event.srcElement.value);" class="form-group">
+            <label for="formRadius">Largura</label>
+            <input type="number" class="form-control" id="formRadius" value="300">
+          </div>
         </div>
       </div>
     </nav>  
@@ -150,9 +208,19 @@
     const makeLine = () => main.makeLineHandler();
     const makeCircle = () => main.makeCircleHandler();
 
-    const setLineType = (value) => main.setLineType(value.toString());
-    const setCircleRadius = (value) => main.setCircleRadius(parseInt(value));
+    const doTranslate = () => main.translateHandler();
+    const doRotate = () => main.rotateHandler();
+    const doScale = () => main.scaleHandler();
+    const doClip = () => main.clipHandler();
 
+
+
+    const setLineType = (v) => main.setLineType(v.toString());
+    const setCircleRadius = (v) => main.setCircleRadius(parseInt(v));
+    const setTranslateSpeed = (v) => main.setTranslateSpeed(parseInt(v));
+    const setRotationDegrees = (v) => main.setRotationDegrees(parseInt(v));
+    const setClipHeight = (v) => main.setClipHeight(parseInt(v));
+    const setClipWidth = (v) => main.setClipWidth(parseInt(v));
   </script>
 
 </body>

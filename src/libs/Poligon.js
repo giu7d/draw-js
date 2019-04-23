@@ -7,10 +7,6 @@ export class Poligon {
         this.points = [...points];
         this.radius = radius
     }
-    
-    // 
-    // Public Methods
-    // 
 
     // Plot Lines or Circles
     draw(canvas, world, viewport) {
@@ -25,15 +21,12 @@ export class Poligon {
     plotLine(canvas, world, viewport) {
         switch (this.type) {
             case 'std':
-                console.log('Using STD');
                 this._stdLine(canvas, world, viewport);
                 break;
             case 'dda':
-                console.log('Using DDA');
                 this._ddaLine(canvas, world, viewport);
                 break;
             case 'bre':
-                console.log('Using Bresenham');
                 this._bresenhamLine(canvas, world, viewport);
                 break;
             default:
@@ -45,14 +38,7 @@ export class Poligon {
     // Plot Circle w/ Poligon.type selected algorithm;  
     plotCircle(canvas, world, viewport) {
         switch (this.type) {
-            
-            case 'std':
-                console.log('Not Implemented');
-                break;
-
-            case 'bre':
-                
-                console.log('Bress');
+            default:                
                 let xViewport, yViewport;
                 
                 for (let i = 0; i < this.points.length; i++) {
@@ -63,26 +49,9 @@ export class Poligon {
                     this._bresenhamCircle(xViewport, yViewport, this.radius, canvas);
                 }
                 break;
-
-            default:
-                console.log('Default');
-                break;
         }
     }
 
-    translate(x, y) {
-        for(let i = 0; i < this.points.length; i++) {
-            // this.points.translate
-        }
-    }
-    
-
-
-
-
-    // 
-    // Private Methods
-    // 
     
     // RENDER LINE IMPL & ALGORITHMS
 
@@ -247,10 +216,47 @@ export class Poligon {
     }
 
 
+    // Clipping
 
-    // scale(rate) {}
-    // rotate(angle) {}
-    // rotateHomogeneous(angle) {}
-    // clippingCohen(clippingViewport, world, viewport) {}
+    // clipping(clip, world, viewport) {
+        
+    //     let p1, p2, out;
+
+    //     poli = new Poligon(0, 'std');
+
+    //     for(let i = 0; i < this.points.length -1; i++) {
+            
+    //         p1 = this.points[i].regionCode(clip, world, viewport);
+    //         p2 = this.points[i+1].regionCode(clip,world,viewport);
+
+    //         if ((p1 === 0) && (p2 === 0)) {
+    //             poli.points.push(this.points[i]);
+    //             poli.points.push(this.points[i+1]);
+    //         } else if ((p1 & p2) == 0) {
+                
+    //             let m = (this.points[i+1].y - this.points[i].y)/(this.points[i+1].x - this.points[i].x);
+    //             let xAux, yAux;
+
+    //             if (p1 != 0 && p2 == 0) {
+    //                 out = p1;
+    //                 poli.points.push(this.points[i+1]);
+    //                 // poli.points.push(calculateNewPoint);
+    //             } else if (p1 == 0 && p2 != 0) {
+    //                 out = p2;
+    //                 poli.points.push(this.points[i]);
+    //                 // poli.points.push(calculateNewPoint);
+    //             } else {
+    //                 out = p2;
+    //                 // poli.points.push(calculateNewPoint);
+    //                 // poli.points.push(calculateNewPoint);
+    //             }
+    //         }
+    //     }
+
+    //     return poli;
+    // }
+
+
+    // _calculateNewPoint()
 
 }

@@ -5,13 +5,19 @@ export class Display {
     }
 
     draw(canvas, world, viewport) {
+
+        this._reset(canvas);
+
         for(let i = 0; i < this.poligons.length; i++) {
             this.poligons[i].draw(canvas,world,viewport);
         }
     }
 
-    // show() {
 
-    // }
-
+    _reset(canvas) {
+        canvas.save();
+        canvas.setTransform(1, 0, 0, 1, 0, 0);
+        canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
+        canvas.restore();
+    }
 }
