@@ -49,18 +49,15 @@ export class Poligon {
     // 
     
     translate(x, y) {        
-        this.points.map(point => {
-            point.translate(x,y)
-        });
+        this.points.map(point => point.translate(x,y));
     }
 
     rotate(theta) {
-        this.points.map(point => {
-            point.rotate(theta);
-        });
+        this.points.map(point => point.rotate(theta));
     }
 
     rotateSelfCenter(theta) {
+        
         let xAux = 0; 
         let yAux = 0;
         
@@ -72,16 +69,17 @@ export class Poligon {
         const xCenter = xAux / this.points.length;
         const yCenter = yAux / this.points.length;
 
-        this.points.map(point => {
-            point.rotateSelfCenter(xCenter, yCenter, theta);
-        });
+        this.points.map(point => point.rotateSelfCenter(xCenter, yCenter, theta));
 
     }
 
     scale(rate) {
-        this.points.map(point => {
-            point.scale(rate, rate);
-        });
+        
+        this.points.map(point => point.scale(rate, rate));
+
+        if (this.radius != 0) {
+            this.radius *= rate;
+        }
     }
 
 
