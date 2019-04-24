@@ -12,20 +12,18 @@ export class IndexController {
         this.canvasElement = document.getElementById('canvas');
         this.ctx = this.canvasElement.getContext('2d');
         
-        // Proprierties
-        
         this.world = new Window(-250, 250, -250, 250);
         this.viewport = new Window(0, 500, 0, 500);
         this.display = new Display();
         this.mouse = new Mouse(this.canvasElement);
        
         this.settings = {
-            lineType: 'std',
-            circleRadius: 10,
-            translateSpeed: 10,
-            rotateCenter: false,
-            rotationDegrees: 25,
-            scaleRate: 1.2,
+            type: 'std',
+            radius: 10,
+            speed: 10,
+            isCenter: false,
+            degrees: 25,
+            rate: 1.2,
             clipHeight: 300,
             clipWidth: 300
         }
@@ -35,14 +33,14 @@ export class IndexController {
     setup() {
         
         this.display.poligons.push(
-            new Poligon(this.settings.lineType, [
+            new Poligon(this.settings.type, [
                 new Point(0, this.world.yMax),
                 new Point(0, this.world.yMin)
             ])
         );
 
         this.display.poligons.push(
-            new Poligon(this.settings.lineType, [
+            new Poligon(this.settings.type, [
                 new Point(this.world.xMin, 0),
                 new Point(this.world.xMax, 0)
             ])
@@ -62,58 +60,61 @@ export class IndexController {
         htmlElement.innerHTML = `X: ${point.x} Y:${point.y}`;
     }
 
-    // shapes
     
     makeLineHandler() {
-        const poligon = new Poligon(this.settings.lineType);
+        const poligon = new Poligon(this.settings.type);
         const index = this.display.poligons.push(poligon)-1;
         const eventHandler = (e) => this._renderEventInCanvas(e, eventHandler, index);
+        
+        this._toggleAction();
         
         this.canvasElement.addEventListener('click', eventHandler, false);
     }
 
     makeCircleHandler() {
 
-        const poligon = new Poligon(this.settings.lineType, [], this.settings.circleRadius);
+        const poligon = new Poligon(this.settings.type, [], this.settings.radius);
         const index = this.display.poligons.push(poligon)-1;
         const eventHandler = (e) => this._renderEventInCanvas(e, eventHandler, index);
         
+        this._toggleAction();
+
         this.canvasElement.addEventListener('click', eventHandler, false);
     }
 
-    // tools
 
     translateHandler() {
         
         const htmlElement = document.getElementById("translate");
+        
         const eventHandler = (event) => {
-            
             switch (event.key) {
                 case 'ArrowUp':
                     this.display.poligons.map(poligon => {
-                        poligon.translate(0, this.settings.translateSpeed);
+                        poligon.translate(0, this.settings.speed);
                     });
                     break;
 
                 case 'ArrowDown':
                     this.display.poligons.map(poligon => {
-                        poligon.translate(0, -this.settings.translateSpeed);
+                        poligon.translate(0, -this.settings.speed);
                     });
                     break;
 
                 case 'ArrowLeft':
                     this.display.poligons.map(poligon => {
-                        poligon.translate(-this.settings.translateSpeed, 0);
+                        poligon.translate(-this.settings.speed, 0);
                     });
                     break;
 
                 case 'ArrowRight':
                     this.display.poligons.map(poligon => {
-                        poligon.translate(this.settings.translateSpeed, 0);
+                        poligon.translate(this.settings.speed, 0);
                     });
                     break;
 
                 default:
+                    this._toggleAction(htmlElement.id);
                     htmlElement.removeEventListener('keydown', eventHandler, false);
                     console.log('Exit');
                     break;
@@ -121,14 +122,15 @@ export class IndexController {
 
             this.display.draw(this.ctx, this.world, this.viewport);
         }
-        
+
+        this._toggleAction(htmlElement.id);        
         htmlElement.addEventListener('keydown', eventHandler, false);
     }
     
     rotateHandler() {
 
-        const angle = -this.settings.rotationDegrees * Math.PI / 180;
-        const isCenter = this.settings.rotateCenter
+        const angle = -this.settings.degrees * Math.PI / 180;
+        const isCenter = this.settings.isCenter
 
         this.display.poligons.map(poligon => (!isCenter) ? poligon.rotate(angle) : poligon.rotateSelfCenter(angle));
 
@@ -139,9 +141,7 @@ export class IndexController {
         
         const htmlElement = document.getElementById('scale');        
         const eventHandler = (event) => {
-            
-            const rate = this.settings.scaleRate;
-
+            const rate = this.settings.rate;
             switch (event.key) {
                 case 'ArrowUp':
                     this.display.poligons.map(poligon => poligon.scale(rate));
@@ -150,6 +150,7 @@ export class IndexController {
                     this.display.poligons.map(poligon => poligon.scale(1/rate));
                     break;
                 default:
+                    this._toggleAction(htmlElement.id);
                     htmlElement.removeEventListener('keydown', eventHandler, false);
                     console.log('Exit');
                     break;
@@ -158,27 +159,35 @@ export class IndexController {
             this.display.draw(this.ctx, this.world, this.viewport);
         }
         
+        this._toggleAction(htmlElement.id);
         htmlElement.addEventListener('keydown', eventHandler, false);
     }
 
     clipHandler() {
 
+        const htmlElement = document.getElementById("crop");
+
         const eventHandler = (e) => {
 
-            const point = this.mouse.positionAsPoint(e);
-                
-            this.display._reset(this.ctx);
+            if (!e.ctrlKey) {
 
-            // Clip
-            this.ctx.beginPath()
-            this.ctx.rect(point.x, point.y, this.settings.clipWidth, this.settings.clipHeight);
-            this.ctx.stroke();
-            this.ctx.clip();
-
-            this.display.draw(this.ctx, this.world, this.viewport);
+                const point = this.mouse.positionAsPoint(e);
+                this.display._reset(this.ctx);
+    
+                // Clip
+                this.ctx.beginPath()
+                this.ctx.rect(point.x, point.y, this.settings.clipWidth, this.settings.clipHeight);
+                this.ctx.stroke();
+                this.ctx.clip();
+    
+                this.display.draw(this.ctx, this.world, this.viewport);
+            }
+            
+            this._toggleAction(htmlElement.id);
             this.canvasElement.removeEventListener('click', eventHandler, false);
         };
 
+        this._toggleAction(htmlElement.id);
         this.canvasElement.addEventListener('click', eventHandler, false);
     }
 
@@ -187,20 +196,20 @@ export class IndexController {
     // Setter's
     // 
 
-    setLineType(type) {
-        this.settings.lineType = type;
+    setType(type) {
+        this.settings.type = type;
     }
 
-    setCircleRadius(size) {
-        this.settings.circleRadius = size;
+    setRadius(size) {
+        this.settings.radius = size;
     }
 
-    setTranslateSpeed(speed) {
-        this.settings.translateSpeed = speed;
+    setSpeed(speed) {
+        this.settings.speed = speed;
     }
 
-    setRotationDegrees(degrees) {
-        this.settings.rotationDegrees = degrees;
+    setDegrees(degrees) {
+        this.settings.degrees = degrees;
     }
 
     setClipHeight(px) {
@@ -211,13 +220,18 @@ export class IndexController {
         this.settings.clipWidth = px;
     }
 
-    setRotationCenter(value) {
-        this.settings.rotateCenter = value;
+    setIsCenter(value) {
+        this.settings.isCenter = value;
     }
 
-    setScaleRate(value) {
-        this.settings.scaleRate = value;
+    setRate(value) {
+        this.settings.rate = value;
     }
+
+
+    // 
+    // Private Methods
+    // 
 
     _renderEventInCanvas(event, eventHandler, index) {
 
@@ -226,18 +240,20 @@ export class IndexController {
             this.display.poligons[index].points.push(point);
         } else {
             this.canvasElement.removeEventListener('click', eventHandler, false);
-            console.log('exit');
+            this._toggleAction();
+            console.log('Exit');
         }
 
         this.display.draw(this.ctx, this.world, this.viewport);
     }
 
+    _toggleAction(selectedElementId = null) {
+        
+        const htmlElement = [...document.getElementsByTagName('button')];
+
+        htmlElement.map(btn => {
+            if (btn.id !== selectedElementId)
+                btn.disabled = (btn.disabled) ? false : true;
+        });
+    }
 }
-
-export function toggleSettings() {
-    const settingsElement = document.getElementById('settingsBtn');
-    const disabled = settingsElement.disabled
-
-    settingsElement.disabled = (disabled) ? false : true;
-}
-

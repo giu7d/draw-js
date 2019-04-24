@@ -39,7 +39,7 @@
   </style>
 
 </head>
-<body onload = "start();"
+<body onload = "main.setup();"
       class="bg-light">
 
   <!-- Title -->
@@ -57,7 +57,7 @@
         <button id="line"
                 type="button" 
                 class="btn btn-outline-secondary"
-                onclick="makeLine();">
+                onclick="main.makeLineHandler();">
           <i class="material-icons">remove</i>                
         </button>
   
@@ -65,7 +65,7 @@
         <button id="circle" 
                 type="button" 
                 class="btn btn-outline-secondary" 
-                onclick="makeCircle();">
+                onclick=" main.makeCircleHandler();">
           <i class="material-icons">radio_button_unchecked</i>
         </button>
 
@@ -77,16 +77,15 @@
         <button id="translate"
                 type="button" 
                 class="btn btn-outline-secondary" 
-                onclick="doTranslate();">
+                onclick="main.translateHandler();">
           <i class="material-icons">open_with</i>
         </button>
-      
-        
+       
         <!-- Rotate -->
         <button id="rotate"
                 type="button" 
                 class="btn btn-outline-secondary" 
-                onclick="doRotate();">
+                onclick="main.rotateHandler();">
           <i class="material-icons">loop</i>
         </button>
 
@@ -94,20 +93,17 @@
         <button id="scale"
                 type="button" 
                 class="btn btn-outline-secondary" 
-                onclick="doScale();">
+                onclick="main.scaleHandler();">
           <i class="material-icons">zoom_out_map</i>
         </button>
 
-
-        <!-- Scale -->
-        <button id="scale"
+        <!-- Crop -->
+        <button id="crop"
                 type="button" 
                 class="btn btn-outline-secondary" 
-                onclick="doClip();">
+                onclick="main.clipHandler();">
           <i class="material-icons">crop</i>
         </button>
-
-
       </div>
 
       <div style="flex: 1 1;"></div>
@@ -122,9 +118,12 @@
                 aria-expanded="false">
           <i class="material-icons">settings</i>        
         </button>
+
         <div class="dropdown-menu p-3" aria-labelledby="settingsBtn">
+          
+          <!-- Render Settings -->
           <span class="dropdown-item-text">Metodo de Renderização</span>          
-          <form onchange="setLineType(event.srcElement.value);" class="p-3">
+          <form onchange="main.setType(event.srcElement.value.toString());" class="p-3">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="renderMethod" id="standardOpt" value="std" checked>
               <label class="form-check-label" for="standardOpt">
@@ -144,41 +143,54 @@
               </label>
             </div>
           </form>
+
           <div class="dropdown-divider"></div>
-          <div onchange="setCircleRadius(event.srcElement.value);" class="form-group">
+
+          <!-- Radius Settings -->
+          <div onchange="main.setRadius(parseInt(event.srcElement.value));" class="form-group">
             <label for="formRadius">Raio</label>
             <input type="number" class="form-control" id="formRadius" value="10">
           </div>
-          <div onchange="setTranslateSpeed(event.srcElement.value);" class="form-group">
+
+          <!-- Speed Settings -->
+          <div onchange="main.setSpeed(parseInt(event.srcElement.value));" class="form-group">
             <label for="formRadius">Velocidade</label>
             <input type="number" class="form-control" id="formRadius" value="10">
           </div>
-
           <div class="dropdown-divider"></div>
-          <span class="dropdown-item-text">Rotação</span>
 
-          <div onchange="setRotationDegrees(event.srcElement.value);" class="form-group">
+          <!-- Rotation Settings -->          
+          <span class="dropdown-item-text">Rotação</span>
+          <div onchange="main.setDegrees(parseInt(event.srcElement.value));" class="form-group">
             <label for="formRadius">Graus</label>
             <input type="number" class="form-control" id="formRadius" value="25">
           </div>
-          <div class="form-check" onchange="setRotationCenter(event.srcElement.checked)">
+          <div class="form-check" onchange="main.setIsCenter(event.srcElement.value);">
             <input class="form-check-input" type="checkbox" id="defaultCheck1">
             <label class="form-check-label" for="defaultCheck1">
               Centralizar?
             </label>
           </div>
           <div class="dropdown-divider"></div>
+          
+          <!-- Clipping Settings -->
           <span class="dropdown-item-text">Tamanho Cliping</span>
-
-          <div onchange="setClipHeight(event.srcElement.value);" class="form-group">
+          <div onchange="main.setClipHeight(parseInt(event.srcElement.value));" class="form-group">
             <label for="formRadius">Altura</label>
             <input type="number" class="form-control" id="formRadius" value="300">
           </div>
-
-          <div onchange="setClipWidth(event.srcElement.value);" class="form-group">
+          <div onchange="main.setClipWidth(parseInt(event.srcElement.value));" class="form-group">
             <label for="formRadius">Largura</label>
             <input type="number" class="form-control" id="formRadius" value="300">
           </div>
+          <div class="dropdown-divider"></div>
+
+          <!-- Scale Rate Settings -->
+          <div onchange="main.setRate(parseFloat(event.srcElement.value));" class="form-group">
+            <label for="formRadius">Zoom</label>
+            <input type="number" class="form-control" id="formRadius" value="1.2">
+          </div>
+
         </div>
       </div>
     </nav>  
@@ -187,7 +199,7 @@
   <!-- Canvas -->
   <main role="main" 
         class="container">
-    <canvas onmousemove="trackMouse(event);"
+    <canvas onmousemove="main.displayCoordinateHandler(event);"
             id="canvas"
             class="m-auto" 
             width="500" 
@@ -211,27 +223,6 @@
 
     const main = new IndexController();
 
-    const start = () =>  main.setup();
-
-    const trackMouse = (e) => main.displayCoordinateHandler(e);
-
-    const makeLine = () => main.makeLineHandler();
-    const makeCircle = () => main.makeCircleHandler();
-
-    const doTranslate = () => main.translateHandler();
-    const doRotate = () => main.rotateHandler();
-    const doScale = () => main.scaleHandler();
-    const doClip = () => main.clipHandler();
-
-
-
-    const setLineType = (v) => main.setLineType(v.toString());
-    const setCircleRadius = (v) => main.setCircleRadius(parseInt(v));
-    const setTranslateSpeed = (v) => main.setTranslateSpeed(parseInt(v));
-    const setRotationDegrees = (v) => main.setRotationDegrees(parseInt(v));
-    const setRotationCenter = (v) => main.setRotationCenter(v);
-    const setClipHeight = (v) => main.setClipHeight(parseInt(v));
-    const setClipWidth = (v) => main.setClipWidth(parseInt(v));
   </script>
 
 </body>
