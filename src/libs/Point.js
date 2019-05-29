@@ -5,6 +5,7 @@ export class Point {
         this.y = parseInt(y);
     }
 
+    
     translate(x, y) {
         this.x += parseInt(x);
         this.y += parseInt(y);
@@ -25,6 +26,18 @@ export class Point {
     scale(x, y) {
         this.x *= x;
         this.y *= y;
+    }
+
+    reflect(axisX, axisY) {
+
+        if (axisX && axisY) {
+            this.x *= -1;
+            this.y *= -1;            
+        } else if (axisX) {
+            this.y *= -1;
+        } else if (axisY) {
+            this.x *= -1;
+        }
     }
 
     xWorldToViewport(world, viewport) {

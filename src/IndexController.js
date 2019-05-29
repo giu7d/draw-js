@@ -59,7 +59,6 @@ export class IndexController {
         
         htmlElement.innerHTML = `X: ${point.x} Y:${point.y}`;
     }
-
     
     makeLineHandler() {
         const poligon = new Poligon(this.settings.type);
@@ -81,7 +80,6 @@ export class IndexController {
 
         this.canvasElement.addEventListener('click', eventHandler, false);
     }
-
 
     translateHandler() {
         
@@ -161,6 +159,12 @@ export class IndexController {
         
         this._toggleAction(htmlElement.id);
         htmlElement.addEventListener('keydown', eventHandler, false);
+    }
+
+
+    reflectHandler() {
+        this.display.poligons.map(poligon => poligon.reflect(1,1));        
+        this.display.draw(this.ctx, this.world, this.viewport);
     }
 
     clipHandler() {

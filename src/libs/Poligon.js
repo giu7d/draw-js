@@ -1,11 +1,11 @@
 export class Poligon {
 
-
     constructor(type, points = [], radius = 0) {
         this.type = type;
         this.points = [...points];
         this.radius = radius
     }
+
     
     // 
     // PLOT
@@ -43,6 +43,7 @@ export class Poligon {
                 break;
         }
     }
+
 
     // 
     // TOOLS
@@ -82,6 +83,27 @@ export class Poligon {
         }
     }
 
+    reflect(xAxis, yAxis) {
+        this.points.map(point => point.reflect(xAxis, yAxis));
+    }
+
+    getEuclidianDist(x0, y0, x1, y1) {
+        return ((x1-x0)*(x1-x0))/((y1-y0)*(y1-y0));
+    }
+
+    matrixMultiply(matrix0 = [[]], matrix1 = [[]]) {
+        
+        let resultMatrix;
+
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                resultMatrix[i][j] = (matrix0[i][0] * matrix1[0][j]) + (matrix0[i][1] * matrix1[1][j]) + (matrix0[i][2] * matrix1[2][j]);
+            }
+        }
+
+        return resultMatrix;
+    }
+    
 
     // 
     // ALGORITHMS
@@ -228,6 +250,10 @@ export class Poligon {
         } 
         while (spareX < 0);
     }
+    
+
+    // CURVES
+    // 
     
 
 }
