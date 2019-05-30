@@ -1,10 +1,14 @@
 # Draw-JS
-A electron app for canvas interaction and computer graphics algorithms implementation (this project was previously written in c++) 
+Uma implementação de algoritimos de reta, circulos e ferramentas utilizadas na computação gráfica.
 
-## Instal
+É necessario a instalação do Nodejs e do NPM para compilar e executar esta aplicação.
+
+## Instalação
+Dentro da pasta raiz do repositorio execute:
 
 ``` npm install -s```
 
-## Run
+## Execução
+Dentro da pasta raiz do repositorio execute:
 
 ``` npm start ```

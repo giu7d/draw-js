@@ -25,7 +25,8 @@ export class IndexController {
             degrees: 25,
             rate: 1.2,
             clipHeight: 300,
-            clipWidth: 300
+            clipWidth: 300,
+            poligonIndex: false
         }
     }
 
@@ -85,28 +86,30 @@ export class IndexController {
         
         const htmlElement = document.getElementById("translate");
         
+        const poligons = (this.settings.poligonIndex !== false) ? [this.display.poligons[this.settings.poligonIndex]] : this.display.poligons;
+
         const eventHandler = (event) => {
             switch (event.key) {
                 case 'ArrowUp':
-                    this.display.poligons.map(poligon => {
+                    poligons.map(poligon => {
                         poligon.translate(0, this.settings.speed);
                     });
                     break;
 
                 case 'ArrowDown':
-                    this.display.poligons.map(poligon => {
+                    poligons.map(poligon => {
                         poligon.translate(0, -this.settings.speed);
                     });
                     break;
 
                 case 'ArrowLeft':
-                    this.display.poligons.map(poligon => {
+                    poligons.map(poligon => {
                         poligon.translate(-this.settings.speed, 0);
                     });
                     break;
 
                 case 'ArrowRight':
-                    this.display.poligons.map(poligon => {
+                    poligons.map(poligon => {
                         poligon.translate(this.settings.speed, 0);
                     });
                     break;
@@ -128,24 +131,27 @@ export class IndexController {
     rotateHandler() {
 
         const angle = -this.settings.degrees * Math.PI / 180;
-        const isCenter = this.settings.isCenter
+        const isCenter = this.settings.isCenter;
+        const poligons = (this.settings.poligonIndex !== false) ? [this.display.poligons[this.settings.poligonIndex]] : this.display.poligons;
 
-        this.display.poligons.map(poligon => (!isCenter) ? poligon.rotate(angle) : poligon.rotateSelfCenter(angle));
+        poligons.map(poligon => (isCenter) ? poligon.rotateSelfCenter(angle) : poligon.rotate(angle));
 
         this.display.draw(this.ctx, this.world, this.viewport);
     }
 
     scaleHandler() {
         
-        const htmlElement = document.getElementById('scale');        
+        const htmlElement = document.getElementById('scale');
+        const poligons = (this.settings.poligonIndex !== false) ? [this.display.poligons[this.settings.poligonIndex]] : this.display.poligons;
+
         const eventHandler = (event) => {
             const rate = this.settings.rate;
             switch (event.key) {
                 case 'ArrowUp':
-                    this.display.poligons.map(poligon => poligon.scale(rate));
+                    poligons.map(poligon => poligon.scale(rate));
                     break;
                 case 'ArrowDown':
-                    this.display.poligons.map(poligon => poligon.scale(1/rate));
+                    poligons.map(poligon => poligon.scale(1/rate));
                     break;
                 default:
                     this._toggleAction(htmlElement.id);
@@ -161,9 +167,9 @@ export class IndexController {
         htmlElement.addEventListener('keydown', eventHandler, false);
     }
 
-
     reflectHandler() {
-        this.display.poligons.map(poligon => poligon.reflect(1,1));        
+        const poligons = (this.settings.poligonIndex !== false) ? [this.display.poligons[this.settings.poligonIndex]] : this.display.poligons;
+        poligons.map(poligon => poligon.reflect(1,1));        
         this.display.draw(this.ctx, this.world, this.viewport);
     }
 
@@ -196,6 +202,14 @@ export class IndexController {
     }
 
 
+    listPoligons() {
+        const htmlElement = document.getElementById('list');
+        const poligons = this.display.poligons;
+
+        htmlElement.innerHTML = '<ul>' + poligons.map((el, i) => '<li><button onClick="main.setPoligonIndex(' + i + ')">'+i+' - '+el.type+'</button></li>') + '<li><button onClick="main.setPoligonIndex(false)">Mundo</button></li></ul>';        
+    }
+
+
     // 
     // Setter's
     // 
@@ -224,12 +238,16 @@ export class IndexController {
         this.settings.clipWidth = px;
     }
 
-    setIsCenter(value) {
-        this.settings.isCenter = value;
+    setIsCenter() {
+        this.settings.isCenter = !this.settings.isCenter;
     }
 
     setRate(value) {
         this.settings.rate = value;
+    }
+
+    setPoligonIndex(index) {
+        this.settings.poligonIndex = index;
     }
 
 
